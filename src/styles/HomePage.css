@@ -1,40 +1,71 @@
-/* Homepage styles */
-.homepage {
-    text-align: center;
-    padding: 2rem;
-    background-color: #0d0d0d; /* Dark background */
-    color: #fff;
-    max-width: 700px;
-    margin: 0 auto; /* Center horizontally */
-    border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
 }
 
+body {
+    background-color: #0d0d0d; /* Dark background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff; /* White text */
+    font-size: 0.9rem; /* Adjusted font size */
+    padding: 0 10px; /* Prevent body from having edges */
+    overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+/* Homepage Container */
+.homepage {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 12px;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem; /* Increased gap for better separation */
+}
+
+/* Homepage Title */
 .homepage-title {
     font-size: 2rem;
-    margin-bottom: 1.5rem;
-    color: white;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 1rem;
 }
 
+/* Homepage Description */
 .homepage-description {
     font-size: 1.1rem;
+    color: #ddd;
+    text-align: center;
     margin-bottom: 2rem;
+}
+
+/* Survey Button */
+.btn {
+    padding: 12px 20px;
+    background-color: #15aece;
     color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0391bf;
+    transform: translateY(-2px);
 }
 
 .survey-btn {
-    padding: 12px 30px;
-    background-color: #15aece;
-    color: white;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    text-decoration: none; /* Remove underline from Link */
-}
-
-.survey-btn:hover {
-    background-color: #0391bf; /* Darker blue on hover */
-    transform: translateY(-3px); /* Smooth hover effect */
+    display: block;
+    width: 100%;
+    text-align: center;
 }

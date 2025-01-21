@@ -20,8 +20,8 @@ body {
 
 /* Headings */
 h2 {
-    font-size: 1.8rem; /* Slightly larger for prominence */
-    margin-bottom: 1.5rem;
+    font-size: 1.6rem; /* Slightly larger for prominence */
+    margin-bottom: 1.3rem;
     color: #fff;
     text-align: center;
 }
@@ -44,16 +44,16 @@ h2 {
 label {
     display: flex;
     align-items: center;
-    gap: 15px; /* Space between input and text */
+    gap: 12px; /* Space between input and text */
     font-size: 1rem; /* Slightly larger text */
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     color: #fff;
     cursor: pointer;
     font-weight: 600;
 }
 
 /* Options Container */
-.options {
+.option {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -135,16 +135,15 @@ textarea:focus {
 }
 
 /* Button Container */
-.button-container {
+.survey-navigation {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    gap: 1.2rem;
 }
 
 /* Buttons */
 button {
-    flex: 1;
+    flex: 0 1 25%;
     padding: 12px 20px;
     border: none;
     background-color: #15aece;
@@ -166,3 +165,58 @@ button:disabled {
     cursor: not-allowed;
     transform: none;
 }
+
+.submit {
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    background-color: #15aece;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ffff;
+    gap: 10px;
+    font-weight: bold;
+    outline: none;
+    overflow: hidden;
+  }
+  
+  .submit:hover {
+    transform: scale(1.05);
+    border-color: #fff9;
+  }
+  
+  .submit:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+  
+  .submit::before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100%;
+    background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -100px;
+    opacity: 0.6;
+  }
+  
+  @keyframes shine {
+    0% {
+      left: -100px;
+    }
+  
+    60% {
+      left: 100%;
+    }
+  
+    to {
+      left: 100%;
+    }
+  }
+  
