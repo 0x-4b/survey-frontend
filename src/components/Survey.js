@@ -16,7 +16,7 @@ const Survey = () => {
   const navigate = useNavigate();
 
   const questions = [
-    { question: "Do you vape?", options: ["Yes", "No"], name: "vape", renderCondition: () => true },
+    { question: "Do you vape?", options: ["Yes", "No"], name: "vape", renderCondition: () => true, required: true },
     { question: "Why did you start vaping?", options: ["Curiosity", "Stress Relief", "Quitting Smoking", "Peer Pressure", "Availability", "Other"], name: "whyVape", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
     { question: "What emotions do you associate with vaping?", options: ["Relaxation", "Stress", "Excitement", "Sadness", "Neutral"], name: "emotionsVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
     { question: "How often do you vape daily?", options: ["Less than 5 times", "5–10 times", "11–20 times", "More than 20 times"], name: "vapeFrequency", renderCondition: () => formData.vape === "Yes" },
@@ -26,7 +26,7 @@ const Survey = () => {
     { question: "Have you experienced any negative effects from vaping?", options: ["Coughing", "Breathing Issues", "Increased Stress", "Dependency", "None", "Other"], name: "negativeEffectsVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
     { question: "Do you think vaping is more harmful than smoking?", options: ["Yes", "No", "Not Sure"], name: "moreHarmfulThanSmoking", renderCondition: () => formData.vape === "Yes" },
     { question: "Have you ever tried quitting vaping?", options: ["Yes", "No", "Currently Trying"], name: "triedQuittingVaping", renderCondition: () => formData.vape === "Yes" },
-    { question: "What is your opinion on vaping?", options: ["Positive", "Neutral", "Negative"], name: "opinionOnVaping", renderCondition: () => formData.vape === "No" },
+    { question: "What is your opinion on vaping?", options: ["Positive", "Neutral", "Negative"], name: "opinionOnVaping", renderCondition: () => formData.vape === "No", required: true },
     { question: "What concerns you the most about vaping?", options: ["Health Risks", "Addiction", "Social Influence", "Accessibility to Youth", "Cost", "None"], name: "concernsAboutVaping", renderCondition: () => formData.vape === "No", isCheckbox: true },
     { question: "Do you feel peer pressure to start vaping?", options: ["Yes", "No", "Sometimes"], name: "peerPressureVaping", renderCondition: () => formData.vape === "No" },
     { question: "Have you ever tried vaping out of curiosity?", options: ["Yes", "No"], name: "triedVapingCuriosity", renderCondition: () => formData.vape === "No" },
@@ -78,14 +78,13 @@ const Survey = () => {
     }
   };
 
- 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const unansweredQuestions = filteredQuestions.filter(
       (q) => q.required && (!formData[q.name] || formData[q.name].length === 0)
     );
-  
+
     if (unansweredQuestions.length > 0) {
       setModal({
         isOpen: true,
@@ -93,21 +92,20 @@ const Survey = () => {
       });
       return;
     }
-  
+
     setIsSubmitting(true);
-  
-    // Prepare survey data in the required structure
+
     const surveyData = {
-      vape: formData.vape, // For the vape question
+      vape: formData.vape,
       responses: filteredQuestions
-        .filter((q) => q.name !== 'vape') // Exclude vape question here
+        .filter((q) => q.name !== 'vape') 
         .map((q) => ({
-          questionId: q.name, // Question identifier
-          answer: Array.isArray(formData[q.name]) ? formData[q.name] : [formData[q.name]], // Store answers as an array
+          questionId: q.name, 
+          answer: Array.isArray(formData[q.name]) ? formData[q.name] : [formData[q.name]],
         })),
       comments: formData.comments || '',
     };
-  
+
     setTimeout(async () => {
       try {
         const apiUrl = process.env.REACT_APP_API_URL;
@@ -116,9 +114,9 @@ const Survey = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(surveyData),
         });
-  
+
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-  
+
         setSubmitted(true);
         setModal({
           isOpen: true,
@@ -135,7 +133,6 @@ const Survey = () => {
       }
     }, 1000); // Processing delay
   };
-  
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
@@ -180,54 +177,35 @@ const Survey = () => {
                 onChange={(e) =>
                   handleInputChange(e, filteredQuestions[currentQuestionIndex].name)
                 }
-                placeholder="Type your response..."
               />
             ) : (
               filteredQuestions[currentQuestionIndex].options.map((option) => (
-                <div className="option" key={option}>
-                  <label>
-                    <input
-                      type={
-                        filteredQuestions[currentQuestionIndex].isCheckbox
-                          ? 'checkbox'
-                          : 'radio'
-                      }
-                      name={filteredQuestions[currentQuestionIndex].name}
-                      value={option}
-                      checked={
-                        Array.isArray(
-                          formData[filteredQuestions[currentQuestionIndex].name]
-                        )
-                          ? formData[
-                              filteredQuestions[currentQuestionIndex].name
-                            ].includes(option)
-                          : formData[filteredQuestions[currentQuestionIndex].name] ===
-                            option
-                      }
-                      onChange={(e) =>
-                        handleInputChange(
-                          e,
-                          filteredQuestions[currentQuestionIndex].name,
-                          filteredQuestions[currentQuestionIndex].isCheckbox
-                        )
-                      }
-                    />
-                    {option}
-                  </label>
-                </div>
+                <label key={option}>
+                  <input
+                    type={filteredQuestions[currentQuestionIndex].isCheckbox ? 'checkbox' : 'radio'}
+                    name={filteredQuestions[currentQuestionIndex].name}
+                    value={option}
+                    checked={formData[filteredQuestions[currentQuestionIndex].name]?.includes(option)}
+                    onChange={(e) =>
+                      handleInputChange(e, filteredQuestions[currentQuestionIndex].name, filteredQuestions[currentQuestionIndex].isCheckbox)
+                    }
+                  />
+                  {option}
+                </label>
               ))
             )}
           </div>
 
-          <div className="survey-navigation">
-            {currentQuestionIndex > 0 && (
-              <button onClick={handlePrevious}>Previous</button>
-            )}
-            {currentQuestionIndex < filteredQuestions.length - 1 && (
+          <div className="navigation-buttons">
+            <button onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
+              Previous
+            </button>
+            {currentQuestionIndex === filteredQuestions.length - 1 ? (
+              <button onClick={handleSubmit} disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+              </button>
+            ) : (
               <button onClick={handleNext}>Next</button>
-            )}
-            {currentQuestionIndex === filteredQuestions.length - 1 && (
-              <button className = 'submit' onClick={handleSubmit}>Submit</button>
             )}
           </div>
         </>
