@@ -59,15 +59,7 @@ const Survey = () => {
     const currentQuestion = filteredQuestions[currentQuestionIndex];
     const currentAnswer = formData[currentQuestion.name];
 
-    if (currentQuestionIndex === 0 && !currentAnswer) {
-      setModal({
-        isOpen: true,
-        message: "Please answer the first question: Do you vape?",
-      });
-      return;
-    }
-
-    if (currentQuestion.required && (!currentAnswer || currentAnswer.length === 0)) {
+    if (!currentAnswer || (Array.isArray(currentAnswer) && currentAnswer.length === 0)) {
       setModal({
         isOpen: true,
         message: "Please answer this question before proceeding.",
@@ -86,38 +78,64 @@ const Survey = () => {
     }
   };
 
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    const surveyData = {
-      vape: formData.vape,
-      responses: Object.keys(formData)
-        .filter((key) => key !== 'comments' || formData[key] !== "")
-        .map((key) => ({
-          questionId: key,
-          answer: Array.isArray(formData[key]) ? formData[key] : [formData[key]],
-        })),
-      comments: formData.comments || "",
-    };
-
-    try {
-      const response = await fetch('/api/surveys', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(surveyData),
+  
+    const unansweredQuestions = filteredQuestions.filter(
+      (q) => q.required && (!formData[q.name] || formData[q.name].length === 0)
+    );
+  
+    if (unansweredQuestions.length > 0) {
+      setModal({
+        isOpen: true,
+        message: "Please answer all required questions before submitting the survey.",
       });
-
-      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-
-      setSubmitted(true);
-    } catch (error) {
-      console.error('Error submitting survey:', error);
-      alert('There was an error submitting the survey. Please try again.');
-    } finally {
-      setTimeout(() => setIsSubmitting(false), 2000);
+      return;
     }
+  
+    setIsSubmitting(true);
+  
+    // Prepare survey data in the required structure
+    const surveyData = {
+      vape: formData.vape, // For the vape question
+      responses: filteredQuestions
+        .filter((q) => q.name !== 'vape') // Exclude vape question here
+        .map((q) => ({
+          questionId: q.name, // Question identifier
+          answer: Array.isArray(formData[q.name]) ? formData[q.name] : [formData[q.name]], // Store answers as an array
+        })),
+      comments: formData.comments || '',
+    };
+  
+    setTimeout(async () => {
+      try {
+        const apiUrl = process.env.REACT_APP_API_URL;
+        const response = await fetch(`${apiUrl}/api/surveys`, { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(surveyData),
+        });
+  
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+  
+        setSubmitted(true);
+        setModal({
+          isOpen: true,
+          message: "Survey submitted successfully!",
+        });
+      } catch (error) {
+        console.error('Error submitting survey:', error);
+        setModal({
+          isOpen: true,
+          message: 'There was an error submitting the survey. Please try again.',
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    }, 1000); // Processing delay
   };
+  
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
@@ -133,27 +151,8 @@ const Survey = () => {
 
   const filteredQuestions = questions.filter((q) => q.renderCondition());
 
-  const isCurrentQuestionAnswered = () => {
-    const currentQuestion = filteredQuestions[currentQuestionIndex];
-    const currentAnswer = formData[currentQuestion.name];
-    return currentQuestion.isCheckbox
-      ? Array.isArray(currentAnswer) && currentAnswer.length > 0
-      : currentAnswer !== undefined && currentAnswer !== '';
-  };
-
-  const isNextButtonDisabled = !isCurrentQuestionAnswered();
-
-  if (submitted) {
-    return (
-      <Modal
-        message="Survey submitted successfully!"
-        onClose={() => navigate('/')}
-      />
-    );
-  }
-
   return (
-    <div className="survey-form">
+    <div className="survey-container">
       {isLoading && <Loading />}
       {!isLoading && (
         <>
@@ -163,7 +162,7 @@ const Survey = () => {
               onClose={() => setModal({ isOpen: false, message: '' })}
             />
           )}
-          {isSubmitting && <Modal message="Processing..." isLoading />}
+
           <ProgressBar
             progress={
               filteredQuestions.length === 1
@@ -179,14 +178,14 @@ const Survey = () => {
                 name={filteredQuestions[currentQuestionIndex].name}
                 value={formData[filteredQuestions[currentQuestionIndex].name] || ''}
                 onChange={(e) =>
-                  handleInputChange(e, filteredQuestions[currentQuestionIndex].name, false)
+                  handleInputChange(e, filteredQuestions[currentQuestionIndex].name)
                 }
-                placeholder="Write your comments here..."
+                placeholder="Type your response..."
               />
             ) : (
-              <div className="options">
-                {filteredQuestions[currentQuestionIndex].options.map((option, index) => (
-                  <label key={index}>
+              filteredQuestions[currentQuestionIndex].options.map((option) => (
+                <div className="option" key={option}>
+                  <label>
                     <input
                       type={
                         filteredQuestions[currentQuestionIndex].isCheckbox
@@ -196,9 +195,14 @@ const Survey = () => {
                       name={filteredQuestions[currentQuestionIndex].name}
                       value={option}
                       checked={
-                        filteredQuestions[currentQuestionIndex].isCheckbox
-                          ? formData[filteredQuestions[currentQuestionIndex].name]?.includes(option)
-                          : formData[filteredQuestions[currentQuestionIndex].name] === option
+                        Array.isArray(
+                          formData[filteredQuestions[currentQuestionIndex].name]
+                        )
+                          ? formData[
+                              filteredQuestions[currentQuestionIndex].name
+                            ].includes(option)
+                          : formData[filteredQuestions[currentQuestionIndex].name] ===
+                            option
                       }
                       onChange={(e) =>
                         handleInputChange(
@@ -210,27 +214,21 @@ const Survey = () => {
                     />
                     {option}
                   </label>
-                ))}
-              </div>
+                </div>
+              ))
             )}
           </div>
-          <div className="navigation-buttons">
-            <button onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
-              Previous
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={isNextButtonDisabled}
-            >
-              Next
-            </button>
-            <button
-              className="submit-button"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-            >
-              Submit
-            </button>
+
+          <div className="survey-navigation">
+            {currentQuestionIndex > 0 && (
+              <button onClick={handlePrevious}>Previous</button>
+            )}
+            {currentQuestionIndex < filteredQuestions.length - 1 && (
+              <button onClick={handleNext}>Next</button>
+            )}
+            {currentQuestionIndex === filteredQuestions.length - 1 && (
+              <button className = 'submit' onClick={handleSubmit}>Submit</button>
+            )}
           </div>
         </>
       )}
