@@ -1,0 +1,168 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #0d0d0d; /* Dark background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff; /* White text */
+    font-size: 0.9rem; /* Adjusted font size */
+    padding: 0 10px; /* Prevent body from having edges */
+    overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+/* Headings */
+h2 {
+    font-size: 1.8rem; /* Slightly larger for prominence */
+    margin-bottom: 1.5rem;
+    color: #fff;
+    text-align: center;
+}
+
+/* Survey Container */
+.survey-container {
+    width: 100%;
+    max-width: 700px;
+    background-color: #1a1a1a; /* Dark gray background */
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); /* Stronger shadow for depth */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem; /* Increased gap for better separation */
+}
+
+/* Label and Input Alignment */
+label {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between input and text */
+    font-size: 1rem; /* Slightly larger text */
+    margin-bottom: 15px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Options Container */
+.options {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 20px; /* Increased spacing between options */
+}
+
+/* Input Styles */
+input[type="radio"],
+input[type="checkbox"] {
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #15aece;
+    background-color: #2b2b2b;
+    border-radius: 50%; /* Circle for radio */
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+input[type="checkbox"] {
+    border-radius: 4px; /* Square for checkboxes */
+}
+
+/* Hover Effect */
+input[type="radio"]:hover,
+input[type="checkbox"]:hover {
+    border-color: #0391bf;
+    background-color: rgba(21, 174, 206, 0.1);
+}
+
+/* Checked State */
+input[type="radio"]:checked::after,
+input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    width: 12px;
+    height: 12px;
+    background-color: #15aece;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+input[type="checkbox"]:checked::after {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px; /* Square for checkbox */
+}
+
+/* Input Focus */
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+    outline: 3px solid #0391bf;
+    outline-offset: 3px;
+}
+
+/* Textarea Styles */
+textarea {
+    width: 100%;
+    min-height: 120px; /* Slightly larger for usability */
+    border-radius: 8px;
+    border: 2px solid #15aece;
+    background-color: #2b2b2b;
+    color: white;
+    padding: 12px;
+    resize: none;
+    font-size: 1rem;
+    margin-top: 1rem; /* Added top margin for separation */
+    margin-bottom: 1.5rem; /* Added bottom margin for more spacing */
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #0391bf;
+}
+
+/* Button Container */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1.2rem;
+}
+
+/* Buttons */
+button {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    background-color: #15aece;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0391bf;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    background-color: #888;
+    cursor: not-allowed;
+    transform: none;
+}

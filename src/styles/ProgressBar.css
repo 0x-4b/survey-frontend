@@ -1,0 +1,32 @@
+.progress-bar-container {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    background-color: #444; /* Dark background */
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  
+  .progress-bar-background {
+    width: 100%;
+    height: 100%;
+    background-color: #333; /* Slightly darker background */
+  }
+  
+  .progress-bar-fill {
+    background-color: #15aece; /* Bright blue progress bar */
+    height: 100%;
+    transition: width 0.5s ease;
+  }
+  
+  .progress-bar-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white; /* White text for progress */
+    font-weight: bold;
+    font-size: 16px;
+    z-index: 1;
+  }
+  
