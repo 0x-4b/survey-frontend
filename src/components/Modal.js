@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import '../styles/Modal.css';
 
 const Modal = ({ message, onClose, isLoading }) => {
+  if (!message) return null; // Prevent rendering when no message is set
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
