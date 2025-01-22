@@ -37,7 +37,7 @@ const Survey = () => {
       { question: "Do you think vaping is a safer alternative to smoking?", options: ["Yes", "No", "Not Sure"], name: "vapingSaferThanSmoking", renderCondition: () => formData.vape === "No" },
       { question: "If a friend offered you a vape, would you accept it?", options: ["Yes", "No", "Depends on the Situation"], name: "acceptVapeOffer", renderCondition: () => formData.vape === "No" },
       { question: "Any additional comments or thoughts?", name: "comments", renderCondition: () => true, isTextarea: true, optional: true },
-    ],
+    ];
     []
   );
 
