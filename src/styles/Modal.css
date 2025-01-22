@@ -1,6 +1,6 @@
 /* Modal Styles */
 .modal-overlay {
-    z-index: 1000000;
+    z-index: 10000000;
     position: fixed;
     top: 0;
     left: 0;
@@ -19,25 +19,67 @@
     max-width: 400px;
     width: 100%;
     text-align: center;
+    position: relative;
 }
 
 .modal-content p {
-    font-size: 1.2rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    margin-top: 0.4rem;
     color: white;
 }
 
+/* Position the close button in the top-right corner */
 .modal-close {
-    padding: 12px 30px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 8px 15px;
     background-color: #15aece;
+    font-size: 1.7rem;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 50%;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-close:hover {
     background-color: #0391bf;
-    transform: translateY(-3px); /* Slight hover effect */
+    transform: translateY(-3px);
+}
+
+.modal-close::before {
+    content: '×';
+    font-size: 1.7rem;
+    color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    .modal-content {
+        max-width: 90%; /* Reduce width for smaller screens */
+        padding: 1.5rem; /* Decrease padding */
+        border-radius: 8px; /* Slightly smaller border-radius */
+    }
+
+    .modal-content p {
+        font-size: 1rem; /* Smaller font size for text */
+    }
+
+    .modal-close {
+        top: 8px; /* Adjust position slightly */
+        right: 8px;
+        width: 30px; /* Smaller button size */
+        height: 30px;
+        font-size: 1.5rem; /* Slightly smaller close icon */
+    }
+
+    .modal-close:hover {
+        transform: translateY(-2px); /* Subtler hover effect */
+    }
 }

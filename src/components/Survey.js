@@ -5,6 +5,7 @@ import Modal from './Modal';
 import Loading from './Loading';
 import '../styles/Survey.css';
 import questionsData from '../data/questions'; // Import questions data
+import CustomButton from './CustomButton'; // Import CustomButton
 
 const Survey = () => {
   const [formData, setFormData] = useState({});
@@ -17,55 +18,63 @@ const Survey = () => {
 
   const navigate = useNavigate();
 
+  // Memoize the questions to switch between English and Arabic based on the selected language
   const questions = useMemo(
     () =>
       questionsData.map((question) => ({
         ...question,
         questionText: question.question[language], // Toggle between English/Arabic question
-        options: question.options.map((option) => ({
+        options: question.options?.map((option) => ({
           ...option,
           optionText: option[language], // Toggle between English/Arabic options
-        })),
+        })) || [],
       })),
     [language]
   );
 
-  // Language switch handler
-  const toggleLanguage = () => {
+  // Handle the language toggle button
+  const handleLanguageToggle = () => {
     setLanguage((prevLanguage) => (prevLanguage === 'en' ? 'ar' : 'en'));
   };
 
+    useEffect(() => {
+    document.body.setAttribute('data-lang', language);
+  }, [language]);
+
+  // Handle input change for questions
   const handleInputChange = (event, questionName, isCheckbox) => {
     const { value, checked } = event.target;
 
     setFormData((prev) => {
+      const newFormData = prev || {};
       if (isCheckbox) {
-        const currentValues = prev[questionName] || [];
+        const currentValues = newFormData[questionName] || [];
         return {
-          ...prev,
+          ...newFormData,
           [questionName]: checked
             ? [...currentValues, value]
             : currentValues.filter((v) => v !== value),
         };
       }
-      return { ...prev, [questionName]: value };
+      return { ...newFormData, [questionName]: value };
     });
   };
 
+  // Handle next question navigation
   const handleNext = () => {
     const currentQuestion = filteredQuestions[currentQuestionIndex];
-    const currentAnswer = formData[currentQuestion.name];
+    const currentAnswer = formData?.[currentQuestion.name];
 
     if (!currentAnswer || (Array.isArray(currentAnswer) && currentAnswer.length === 0)) {
       setModal({
         isOpen: true,
-        message: language === 'en' ? 'Please answer this question before proceeding.' : 'الرجاء الإجابة على هذا السؤال قبل المتابعة.',
+        message: language === 'en' ? 'Please answer this question before proceeding' : 'الرجاء الإجابة على هذا السؤال قبل المتابعة',
       });
       return;
     }
 
     const nextIndex = filteredQuestions.findIndex(
-      (q, index) => index > currentQuestionIndex && q.renderCondition()
+      (q, index) => index > currentQuestionIndex && q.renderCondition(formData)
     );
 
     if (nextIndex !== -1) {
@@ -73,17 +82,19 @@ const Survey = () => {
     }
   };
 
+  // Handle previous question navigation
   const handlePrevious = () => {
     const prevIndex = filteredQuestions
       .slice(0, currentQuestionIndex)
       .reverse()
-      .findIndex((q) => q.renderCondition());
+      .findIndex((q) => q.renderCondition(formData));
 
     if (prevIndex !== -1) {
       setCurrentQuestionIndex(currentQuestionIndex - prevIndex - 1);
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -99,19 +110,24 @@ const Survey = () => {
       return;
     }
 
-    const responses = filteredQuestions.map((question) => {
-      if (formData[question.name]) {
-        return {
-          questionId: question.name,
-          answer: Array.isArray(formData[question.name])
-            ? formData[question.name]
-            : [formData[question.name]],
-        };
-      }
-      return null;
-    }).filter(Boolean);
+    // Collect responses
+    const responses = filteredQuestions
+      .filter((question) => question.name !== 'vape' && question.name !== 'comments') // Exclude vape and comments from responses
+      .map((question) => {
+        if (formData[question.name]) {
+          return {
+            questionId: question.name,
+            answer: Array.isArray(formData[question.name])
+              ? formData[question.name]
+              : [formData[question.name]],
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
 
-    const comments = formData.comments || '';
+    const comments = formData.comments || ''; // Get comments value
+    const vape = formData.vape || ''; // Get vape value
 
     setIsSubmitting(true);
 
@@ -120,7 +136,7 @@ const Survey = () => {
       const response = await fetch(`${apiUrl}/api/surveys`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ vape: formData.vape, responses, comments }),
+        body: JSON.stringify({ vape, responses, comments }),
       });
 
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
@@ -141,11 +157,13 @@ const Survey = () => {
     }
   };
 
+  // Set loading state
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
+  // Redirect after submission
   useEffect(() => {
     if (submitted) {
       const timer = setTimeout(() => navigate('/'), 2000);
@@ -153,6 +171,7 @@ const Survey = () => {
     }
   }, [submitted, navigate]);
 
+  // Memoize filtered questions
   const filteredQuestions = useMemo(
     () => questions.filter((q) => q.renderCondition(formData)),
     [formData, questions]
@@ -177,11 +196,6 @@ const Survey = () => {
                 : (currentQuestionIndex / (filteredQuestions.length - 1)) * 100
             }
           />
-
-          {/* Language Toggle Button */}
-          <button onClick={toggleLanguage} className="language-toggle">
-            {language === 'en' ? 'العربية' : 'English'}
-          </button>
 
           <div className="option">
             <h2 id={`question-${currentQuestionIndex}`}>
@@ -218,17 +232,29 @@ const Survey = () => {
           </div>
 
           <div className="survey-navigation">
-            <button onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
-              {language === 'en' ? 'Previous' : 'السابق'}
-            </button>
+            <CustomButton
+              text={language === 'en' ? 'Previous' : 'السابق'}
+              onClick={handlePrevious}
+              className={currentQuestionIndex === 0 ? 'disabled' : ''}
+            />
+
+            {/* Language Toggle Button */}
+            <CustomButton className='lang-btn'
+              text={language === 'en' ? 'Toggle Language' : 'تبديل اللغة'}
+              onClick={handleLanguageToggle}
+            />
+
             {currentQuestionIndex === filteredQuestions.length - 1 ? (
-              <button className="submit" onClick={handleSubmit} disabled={isSubmitting}>
-                {isSubmitting ? (language === 'en' ? 'Submitting...' : 'إرسال...') : (language === 'en' ? 'Submit' : 'إرسال')}
-              </button>
+              <CustomButton
+                text={isSubmitting ? (language === 'en' ? 'Submitting...' : 'إرسال...') : (language === 'en' ? 'Submit' : 'إرسال')}
+                onClick={handleSubmit}
+                className={isSubmitting ? 'disabled' : ''}
+              />
             ) : (
-              <button onClick={handleNext}>
-                {language === 'en' ? 'Next' : 'التالي'}
-              </button>
+              <CustomButton
+                text={language === 'en' ? 'Next' : 'التالي'}
+                onClick={handleNext}
+              />
             )}
           </div>
         </>

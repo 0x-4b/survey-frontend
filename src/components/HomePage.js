@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
+import CustomButton from './CustomButton';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  
-  const navigate = useNavigate(); // Initialize the useNavigate hook
+  const [language, setLanguage] = useState(() => {
+    const storedLanguage = localStorage.getItem('language');
+    return storedLanguage ? storedLanguage : 'en'; // Default to 'en' if nothing is stored
+  });
+
+  const navigate = useNavigate();
 
   const openModal = (message) => {
     setModalMessage(message);
@@ -19,24 +24,49 @@ const HomePage = () => {
   };
 
   const handleSurveyButtonClick = () => {
-    navigate('/survey'); // Programmatically navigate to the survey page
+    navigate('/survey');
+  };
+
+  const toggleLanguage = () => {
+    const newLanguage = language === 'en' ? 'ar' : 'en';
+    setLanguage(newLanguage);
+    localStorage.setItem('language', newLanguage); // Save to localStorage
   };
 
   return (
     <div className="homepage">
-      <h1 className="homepage-title">Survey on Vaping</h1>
-      <p className="homepage-description">We appreciate your feedback. Please take a moment to participate in our vaping survey.</p>
+      <h1 className="homepage-title">
+        {language === 'en' ? 'Survey on Vaping' : 'استبيان عن التدخين الإلكتروني'}
+      </h1>
+      <p className="homepage-description">
+        {language === 'en'
+          ? 'We appreciate your feedback. Please take a moment to participate in our vaping survey.'
+          : 'نقدر تعليقاتك. يرجى تخصيص بعض الوقت للمشاركة في استبيان التدخين الإلكتروني.'}
+      </p>
 
-      {/* Change Link to Button with hover styling */}
-      <button 
-        className="btn survey-btn" 
+      {/* Language Toggle Button */}
+      <CustomButton
+        text={language === 'en' ? 'Switch to Arabic' : 'التبديل إلى الإنجليزية'}
+        onClick={toggleLanguage}
+        className="language-toggle"
+      />
+
+      {/* Survey Button */}
+      <CustomButton
+        text={language === 'en' ? 'Take the Survey' : 'ابدأ الاستبيان'}
         onClick={handleSurveyButtonClick}
-      >
-        Take the Survey
-      </button>
+        className="survey-btn"
+      />
 
-      {/* Modal rendering */}
-      {isModalOpen && <Modal message={modalMessage} onClose={closeModal} />}
+      {/* Modal */}
+      {isModalOpen && (
+        <Modal
+          message={modalMessage}
+          onClose={closeModal}
+          isLoading={false}
+          language={language}
+        />
+      )}
     </div>
   );
 };

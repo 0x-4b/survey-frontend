@@ -46,26 +46,101 @@ body {
     margin-bottom: 2rem;
 }
 
+/* Language Button */
+.language-toggle {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #15aece;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.language-toggle:hover {
+    background-color: #0391bf;
+}
+
+.language-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(3, 145, 191, 0.8);
+}
+
 /* Survey Button */
-.btn {
+.survey-btn {
     padding: 12px 20px;
     background-color: #15aece;
     color: white;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: bold;
     border-radius: 8px;
     border: none;
-    transition: all 0.3s ease;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.btn:hover {
+.survey-btn:hover {
     background-color: #0391bf;
     transform: translateY(-2px);
 }
 
-.survey-btn {
-    display: block;
-    width: 100%;
-    text-align: center;
+.survey-btn:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(3, 145, 191, 0.8);
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .homepage {
+        padding: 2rem;
+        gap: 1.5rem;
+    }
+
+    .homepage-title {
+        font-size: 1.8rem;
+    }
+
+    .homepage-description {
+        font-size: 1rem;
+    }
+
+    .language-toggle {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+
+    .survey-btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .homepage {
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+
+    .homepage-title {
+        font-size: 1.5rem;
+    }
+
+    .homepage-description {
+        font-size: 0.9rem;
+    }
+
+    .language-toggle {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+
+    .survey-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
 }

@@ -18,6 +18,17 @@ body {
     overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
+/* RTL and LTR Support */
+body[data-lang="ar"] {
+    direction: rtl;
+    text-align: right;
+}
+
+body[data-lang="en"] {
+    direction: ltr;
+    text-align: left;
+}
+
 /* Headings */
 h2 {
     font-size: 1.6rem; /* Slightly larger for prominence */
@@ -46,7 +57,7 @@ label {
     align-items: center;
     gap: 12px; /* Space between input and text */
     font-size: 1rem; /* Slightly larger text */
-    margin-bottom: 12px;
+    margin-bottom: 1px;
     color: #fff;
     cursor: pointer;
     font-weight: 600;
@@ -220,3 +231,51 @@ button:disabled {
     }
   }
   
+
+  .lang-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #15aece;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+
+@media (max-width: 600px) {
+    body {
+        font-size: 0.8rem; /* Smaller text for mobile */
+    }
+
+    .survey-container {
+        padding: 1.5rem; /* Reduced padding for small screens */
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+        width: 18px; /* Smaller inputs for mobile */
+        height: 18px;
+    }
+
+    textarea {
+        min-height: 80px; /* Smaller textarea for mobile */
+        font-size: 0.8rem; /* Adjusted font size */
+    }
+
+    button {
+        font-size: 0.8rem; /* Adjusted font size */
+        padding: 8px 14px; /* Compact buttons */
+    }
+
+    .lang-btn {
+        padding: 6px 12px; /* Adjusted padding */
+        font-size: 0.8rem; /* Smaller font size */
+    }
+}

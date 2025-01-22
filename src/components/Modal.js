@@ -9,7 +9,11 @@ const Modal = ({ message, onClose, isLoading }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <p>{isLoading ? "Processing..." : message}</p>
-        <button className="modal-close" onClick={onClose}>Close</button>
+        
+        {/* Close Button (X) */}
+        <button className="modal-close" onClick={onClose}>
+           {/* "×" is the HTML entity for the "X" symbol */}
+        </button>
       </div>
     </div>
   );
