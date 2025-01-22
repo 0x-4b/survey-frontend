@@ -4,7 +4,7 @@ import ProgressBar from './ProgressBar';
 import Modal from './Modal';
 import Loading from './Loading';
 import '../styles/Survey.css';
-
+ 
 const Survey = () => {
   const [formData, setFormData] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
