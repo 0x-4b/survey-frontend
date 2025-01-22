@@ -95,8 +95,9 @@ const Survey = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // Check for unanswered required questions
     const unansweredQuestions = filteredQuestions.filter(
-      (q) => q.required && (!formData[q.name] || formData[q.name].length === 0)
+      (q) => q.required && (!formData[q.name] || (Array.isArray(formData[q.name]) && formData[q.name].length === 0))
     );
   
     if (unansweredQuestions.length > 0) {
@@ -107,27 +108,31 @@ const Survey = () => {
       return;
     }
   
+    // Prepare data for submission
+    const responses = filteredQuestions.map((question) => {
+      // Check if the question has been answered
+      if (formData[question.name]) {
+        return {
+          questionId: question.name, // Use the name of the question as the ID
+          answer: Array.isArray(formData[question.name])
+            ? formData[question.name] // Multi-select (checkbox)
+            : [formData[question.name]], // Single-select (radio)
+        };
+      }
+      return null;
+    }).filter(Boolean); // Remove any null entries
+  
+    // Add comments separately
+    const comments = formData.comments || '';
+  
     setIsSubmitting(true);
   
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
-      const responses = filteredQuestions.map((question) => {
-        const answer = formData[question.name];
-  
-        return {
-          questionId: question.name,  // Use question.name as the unique identifier
-          answer: Array.isArray(answer) ? answer : [answer],  // Ensure the answer is an array (for single and multi-select)
-        };
-      });
-  
       const response = await fetch(`${apiUrl}/api/surveys`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          vape: formData.vape,
-          responses,
-          comments: formData.comments || '',  // Include comments if available
-        }),
+        body: JSON.stringify({ vape: formData.vape, responses, comments }),
       });
   
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
