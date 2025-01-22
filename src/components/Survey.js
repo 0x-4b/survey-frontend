@@ -15,31 +15,28 @@ const Survey = () => {
 
   const navigate = useNavigate();
 
-  const questions = useMemo(
-    () => [
-      { question: "Do you vape?", options: ["Yes", "No"], name: "vape", renderCondition: () => true, required: true },
-      { question: "Why did you start vaping?", options: ["Curiosity", "Stress Relief", "Quitting Smoking", "Peer Pressure", "Availability", "Other"], name: "whyVape", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "What emotions do you associate with vaping?", options: ["Relaxation", "Stress", "Excitement", "Sadness", "Neutral"], name: "emotionsVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "How often do you vape daily?", options: ["Less than 5 times", "5–10 times", "11–20 times", "More than 20 times"], name: "vapeFrequency", renderCondition: () => formData.vape === "Yes" },
-      { question: "Do you believe vaping has improved your quality of life?", options: ["Yes", "No", "Not Sure"], name: "vapingImprovedLife", renderCondition: () => formData.vape === "Yes" },
-      { question: "What social settings do you usually vape in?", options: ["Parties", "With Friends", "Alone", "At Work/School", "Public Spaces", "Other"], name: "vapeSocialSettings", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "What are the primary reasons you continue to vape?", options: ["Habit", "Stress Relief", "Enjoyment", "Social Influence", "Other"], name: "reasonsContinueVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "Have you experienced any negative effects from vaping?", options: ["Coughing", "Breathing Issues", "Increased Stress", "Dependency", "None", "Other"], name: "negativeEffectsVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "Do you think vaping is more harmful than smoking?", options: ["Yes", "No", "Not Sure"], name: "moreHarmfulThanSmoking", renderCondition: () => formData.vape === "Yes" },
-      { question: "Have you ever tried quitting vaping?", options: ["Yes", "No", "Currently Trying"], name: "triedQuittingVaping", renderCondition: () => formData.vape === "Yes" },
-      { question: "What is your opinion on vaping?", options: ["Positive", "Neutral", "Negative"], name: "opinionOnVaping", renderCondition: () => formData.vape === "No", required: true },
-      { question: "What concerns you the most about vaping?", options: ["Health Risks", "Addiction", "Social Influence", "Accessibility to Youth", "Cost", "None"], name: "concernsAboutVaping", renderCondition: () => formData.vape === "No", isCheckbox: true },
-      { question: "Do you feel peer pressure to start vaping?", options: ["Yes", "No", "Sometimes"], name: "peerPressureVaping", renderCondition: () => formData.vape === "No" },
-      { question: "Have you ever tried vaping out of curiosity?", options: ["Yes", "No"], name: "triedVapingCuriosity", renderCondition: () => formData.vape === "No" },
-      { question: "What do you think are the main reasons people vape?", options: ["Stress Relief", "Social Influence", "Quitting Smoking", "Curiosity", "Other"], name: "reasonsPeopleVape", renderCondition: () => formData.vape === "No", isCheckbox: true },
-      { question: "How strong is the social influence of vaping in your environment?", options: ["High", "Moderate", "Low", "None"], name: "socialInfluenceVaping", renderCondition: () => formData.vape === "No" },
-      { question: "Would you ever consider vaping in the future?", options: ["Yes", "No", "Not Sure"], name: "considerVapingFuture", renderCondition: () => formData.vape === "No" },
-      { question: "Do you think vaping is a safer alternative to smoking?", options: ["Yes", "No", "Not Sure"], name: "vapingSaferThanSmoking", renderCondition: () => formData.vape === "No" },
-      { question: "If a friend offered you a vape, would you accept it?", options: ["Yes", "No", "Depends on the Situation"], name: "acceptVapeOffer", renderCondition: () => formData.vape === "No" },
-      { question: "Any additional comments or thoughts?", name: "comments", renderCondition: () => true, isTextarea: true, optional: true },
-    ];
-    []
-  );
+  const questions = useMemo(() => [
+    { question: "Do you vape?", options: ["Yes", "No"], name: "vape", renderCondition: () => true, required: true },
+    { question: "Why did you start vaping?", options: ["Curiosity", "Stress Relief", "Quitting Smoking", "Peer Pressure", "Availability", "Other"], name: "whyVape", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
+    { question: "What emotions do you associate with vaping?", options: ["Relaxation", "Stress", "Excitement", "Sadness", "Neutral"], name: "emotionsVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
+    { question: "How often do you vape daily?", options: ["Less than 5 times", "5–10 times", "11–20 times", "More than 20 times"], name: "vapeFrequency", renderCondition: () => formData.vape === "Yes" },
+    { question: "Do you believe vaping has improved your quality of life?", options: ["Yes", "No", "Not Sure"], name: "vapingImprovedLife", renderCondition: () => formData.vape === "Yes" },
+    { question: "What social settings do you usually vape in?", options: ["Parties", "With Friends", "Alone", "At Work/School", "Public Spaces", "Other"], name: "vapeSocialSettings", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
+    { question: "What are the primary reasons you continue to vape?", options: ["Habit", "Stress Relief", "Enjoyment", "Social Influence", "Other"], name: "reasonsContinueVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
+    { question: "Have you experienced any negative effects from vaping?", options: ["Coughing", "Breathing Issues", "Increased Stress", "Dependency", "None", "Other"], name: "negativeEffectsVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
+    { question: "Do you think vaping is more harmful than smoking?", options: ["Yes", "No", "Not Sure"], name: "moreHarmfulThanSmoking", renderCondition: () => formData.vape === "Yes" },
+    { question: "Have you ever tried quitting vaping?", options: ["Yes", "No", "Currently Trying"], name: "triedQuittingVaping", renderCondition: () => formData.vape === "Yes" },
+    { question: "What is your opinion on vaping?", options: ["Positive", "Neutral", "Negative"], name: "opinionOnVaping", renderCondition: () => formData.vape === "No", required: true },
+    { question: "What concerns you the most about vaping?", options: ["Health Risks", "Addiction", "Social Influence", "Accessibility to Youth", "Cost", "None"], name: "concernsAboutVaping", renderCondition: () => formData.vape === "No", isCheckbox: true },
+    { question: "Do you feel peer pressure to start vaping?", options: ["Yes", "No", "Sometimes"], name: "peerPressureVaping", renderCondition: () => formData.vape === "No" },
+    { question: "Have you ever tried vaping out of curiosity?", options: ["Yes", "No"], name: "triedVapingCuriosity", renderCondition: () => formData.vape === "No" },
+    { question: "What do you think are the main reasons people vape?", options: ["Stress Relief", "Social Influence", "Quitting Smoking", "Curiosity", "Other"], name: "reasonsPeopleVape", renderCondition: () => formData.vape === "No", isCheckbox: true },
+    { question: "How strong is the social influence of vaping in your environment?", options: ["High", "Moderate", "Low", "None"], name: "socialInfluenceVaping", renderCondition: () => formData.vape === "No" },
+    { question: "Would you ever consider vaping in the future?", options: ["Yes", "No", "Not Sure"], name: "considerVapingFuture", renderCondition: () => formData.vape === "No" },
+    { question: "Do you think vaping is a safer alternative to smoking?", options: ["Yes", "No", "Not Sure"], name: "vapingSaferThanSmoking", renderCondition: () => formData.vape === "No" },
+    { question: "If a friend offered you a vape, would you accept it?", options: ["Yes", "No", "Depends on the Situation"], name: "acceptVapeOffer", renderCondition: () => formData.vape === "No" },
+    { question: "Any additional comments or thoughts?", name: "comments", renderCondition: () => true, isTextarea: true, optional: true },
+  ], [formData]);
 
   const handleInputChange = (event, questionName, isCheckbox) => {
     const { value, checked } = event.target;
@@ -70,12 +67,23 @@ const Survey = () => {
       return;
     }
 
-    setCurrentQuestionIndex((prev) => prev + 1);
+    const nextIndex = filteredQuestions.findIndex(
+      (q, index) => index > currentQuestionIndex && q.renderCondition()
+    );
+
+    if (nextIndex !== -1) {
+      setCurrentQuestionIndex(nextIndex);
+    }
   };
 
   const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prev) => prev - 1);
+    const prevIndex = filteredQuestions
+      .slice(0, currentQuestionIndex)
+      .reverse()
+      .findIndex((q) => q.renderCondition());
+
+    if (prevIndex !== -1) {
+      setCurrentQuestionIndex(currentQuestionIndex - prevIndex - 1);
     }
   };
 
@@ -195,7 +203,7 @@ const Survey = () => {
               Previous
             </button>
             {currentQuestionIndex === filteredQuestions.length - 1 ? (
-              <button className=submit onClick={handleSubmit} disabled={isSubmitting}>
+              <button className='submit' onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
             ) : (
