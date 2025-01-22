@@ -98,40 +98,37 @@ const Survey = () => {
     const surveyData = {
       vape: formData.vape,
       responses: filteredQuestions
-        .filter((q) => q.name !== 'vape') 
+        .filter((q) => q.name !== 'vape' && q.name !== 'comments') // Exclude comments
         .map((q) => ({
-          questionId: q.name, 
+          questionId: q.name,
           answer: Array.isArray(formData[q.name]) ? formData[q.name] : [formData[q.name]],
         })),
-      comments: formData.comments || '',
     };
 
-    setTimeout(async () => {
-      try {
-        const apiUrl = process.env.REACT_APP_API_URL;
-        const response = await fetch(`${apiUrl}/api/surveys`, { 
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(surveyData),
-        });
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL;
+      const response = await fetch(`${apiUrl}/api/surveys`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(surveyData),
+      });
 
-        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
-        setSubmitted(true);
-        setModal({
-          isOpen: true,
-          message: "Survey submitted successfully!",
-        });
-      } catch (error) {
-        console.error('Error submitting survey:', error);
-        setModal({
-          isOpen: true,
-          message: 'There was an error submitting the survey. Please try again.',
-        });
-      } finally {
-        setIsSubmitting(false);
-      }
-    }, 1000); // Processing delay
+      setSubmitted(true);
+      setModal({
+        isOpen: true,
+        message: "Survey submitted successfully!",
+      });
+    } catch (error) {
+      console.error('Error submitting survey:', error);
+      setModal({
+        isOpen: true,
+        message: 'There was an error submitting the survey. Please try again.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -172,7 +169,6 @@ const Survey = () => {
             <h2>{filteredQuestions[currentQuestionIndex].question}</h2>
             {filteredQuestions[currentQuestionIndex].isTextarea ? (
               <textarea
-                name={filteredQuestions[currentQuestionIndex].name}
                 value={formData[filteredQuestions[currentQuestionIndex].name] || ''}
                 onChange={(e) =>
                   handleInputChange(e, filteredQuestions[currentQuestionIndex].name)
