@@ -92,45 +92,47 @@ const Survey = () => {
     }
   };
 
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const unansweredQuestions = filteredQuestions.filter(
-      (q) => q.required && (!formData[q.name] || formData[q.name].length === 0)
-    );
-
-    if (unansweredQuestions.length > 0) {
-      setModal({
-        isOpen: true,
-        message: 'Please answer all required questions before submitting the survey.',
-      });
-      return;
-    }
-
     setIsSubmitting(true);
-
+    
+    const formData = {
+      vape: formData.vape,  // the value for the vape question (Yes/No)
+      responses: formData.responses.map((response, index) => ({
+        questionId: `question_${index + 1}`,  // dynamically set question IDs (question_1, question_2, etc.)
+        answer: response.answer,  // array of answers for the current question
+      })),
+      comments: formData.comments,  // optional comments
+    };
+  
     try {
-      const apiUrl = process.env.REACT_APP_API_URL;
+      const apiUrl = process.env.REACT_APP_API_URL; // Ensure correct API URL
       const response = await fetch(`${apiUrl}/api/surveys`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(formData),
       });
-
-      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+  
       setSubmitted(true);
       setModal({ isOpen: true, message: 'Survey submitted successfully!' });
     } catch (error) {
       console.error('Error submitting survey:', error);
       setModal({
         isOpen: true,
-        message: 'There was an error submitting the survey. Please try again.',
+        message: `There was an error submitting the survey. Please try again. ${error.message}`,
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+  
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
