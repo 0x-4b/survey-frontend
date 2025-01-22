@@ -195,7 +195,7 @@ const Survey = () => {
               Previous
             </button>
             {currentQuestionIndex === filteredQuestions.length - 1 ? (
-              <button className='submit' onClick={handleSubmit} disabled={isSubmitting}>
+              <button className="submit" onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
             ) : (
