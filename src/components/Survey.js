@@ -156,7 +156,7 @@ const Survey = () => {
             }
           />
 
-          <div className="question-container">
+          <div className="option">
             <h2 id={`question-${currentQuestionIndex}`}>
               {filteredQuestions[currentQuestionIndex].question}
             </h2>
@@ -190,12 +190,12 @@ const Survey = () => {
             )}
           </div>
 
-          <div className="navigation-buttons">
+          <div className="survey-navigation">
             <button onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
               Previous
             </button>
             {currentQuestionIndex === filteredQuestions.length - 1 ? (
-              <button onClick={handleSubmit} disabled={isSubmitting}>
+              <button className='submit' onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
             ) : (
