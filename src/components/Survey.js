@@ -4,7 +4,8 @@ import ProgressBar from './ProgressBar';
 import Modal from './Modal';
 import Loading from './Loading';
 import '../styles/Survey.css';
- 
+import questionsData from '../data/questions'; // Import questions data
+
 const Survey = () => {
   const [formData, setFormData] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -12,33 +13,21 @@ const Survey = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modal, setModal] = useState({ isOpen: false, message: '' });
+  const [language, setLanguage] = useState('en'); // Default language is English
 
   const navigate = useNavigate();
 
   const questions = useMemo(
-    () => [
-      { question: "Do you vape?", options: ["Yes", "No"], name: "vape", renderCondition: () => true, required: true },
-      { question: "Why did you start vaping?", options: ["Curiosity", "Stress Relief", "Quitting Smoking", "Peer Pressure", "Availability", "Other"], name: "whyVape", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "What emotions do you associate with vaping?", options: ["Relaxation", "Stress", "Excitement", "Sadness", "Neutral"], name: "emotionsVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "How often do you vape daily?", options: ["Less than 5 times", "5–10 times", "11–20 times", "More than 20 times"], name: "vapeFrequency", renderCondition: () => formData.vape === "Yes" },
-      { question: "Do you believe vaping has improved your quality of life?", options: ["Yes", "No", "Not Sure"], name: "vapingImprovedLife", renderCondition: () => formData.vape === "Yes" },
-      { question: "What social settings do you usually vape in?", options: ["Parties", "With Friends", "Alone", "At Work/School", "Public Spaces", "Other"], name: "vapeSocialSettings", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "What are the primary reasons you continue to vape?", options: ["Habit", "Stress Relief", "Enjoyment", "Social Influence", "Other"], name: "reasonsContinueVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "Have you experienced any negative effects from vaping?", options: ["Coughing", "Breathing Issues", "Increased Stress", "Dependency", "None", "Other"], name: "negativeEffectsVaping", renderCondition: () => formData.vape === "Yes", isCheckbox: true },
-      { question: "Do you think vaping is more harmful than smoking?", options: ["Yes", "No", "Not Sure"], name: "moreHarmfulThanSmoking", renderCondition: () => formData.vape === "Yes" },
-      { question: "Have you ever tried quitting vaping?", options: ["Yes", "No", "Currently Trying"], name: "triedQuittingVaping", renderCondition: () => formData.vape === "Yes" },
-      { question: "What is your opinion on vaping?", options: ["Positive", "Neutral", "Negative"], name: "opinionOnVaping", renderCondition: () => formData.vape === "No", required: true },
-      { question: "What concerns you the most about vaping?", options: ["Health Risks", "Addiction", "Social Influence", "Accessibility to Youth", "Cost", "None"], name: "concernsAboutVaping", renderCondition: () => formData.vape === "No", isCheckbox: true },
-      { question: "Do you feel peer pressure to start vaping?", options: ["Yes", "No", "Sometimes"], name: "peerPressureVaping", renderCondition: () => formData.vape === "No" },
-      { question: "Have you ever tried vaping out of curiosity?", options: ["Yes", "No"], name: "triedVapingCuriosity", renderCondition: () => formData.vape === "No" },
-      { question: "What do you think are the main reasons people vape?", options: ["Stress Relief", "Social Influence", "Quitting Smoking", "Curiosity", "Other"], name: "reasonsPeopleVape", renderCondition: () => formData.vape === "No", isCheckbox: true },
-      { question: "How strong is the social influence of vaping in your environment?", options: ["High", "Moderate", "Low", "None"], name: "socialInfluenceVaping", renderCondition: () => formData.vape === "No" },
-      { question: "Would you ever consider vaping in the future?", options: ["Yes", "No", "Not Sure"], name: "considerVapingFuture", renderCondition: () => formData.vape === "No" },
-      { question: "Do you think vaping is a safer alternative to smoking?", options: ["Yes", "No", "Not Sure"], name: "vapingSaferThanSmoking", renderCondition: () => formData.vape === "No" },
-      { question: "If a friend offered you a vape, would you accept it?", options: ["Yes", "No", "Depends on the Situation"], name: "acceptVapeOffer", renderCondition: () => formData.vape === "No" },
-      { question: "Any additional comments or thoughts?", name: "comments", renderCondition: () => true, isTextarea: true, optional: true },
-    ],
-    [formData]
+    () =>
+      questionsData.map((question) => ({
+        ...question,
+        questionText: question.question[language], // Toggle between English/Arabic question
+        options: question.options.map((option) => ({
+          ...option,
+          optionText: option[language], // Toggle between English/Arabic options
+        })),
+      })),
+    [language]
   );
 
   const handleInputChange = (event, questionName, isCheckbox) => {
@@ -62,16 +51,14 @@ const Survey = () => {
     const currentQuestion = filteredQuestions[currentQuestionIndex];
     const currentAnswer = formData[currentQuestion.name];
 
-    // Check if the current question has been answered
     if (!currentAnswer || (Array.isArray(currentAnswer) && currentAnswer.length === 0)) {
       setModal({
         isOpen: true,
-        message: 'Please answer this question before proceeding.',
+        message: language === 'en' ? 'Please answer this question before proceeding.' : 'الرجاء الإجابة على هذا السؤال قبل المتابعة.',
       });
       return;
     }
 
-    // Find the next valid question index
     const nextIndex = filteredQuestions.findIndex(
       (q, index) => index > currentQuestionIndex && q.renderCondition()
     );
@@ -94,39 +81,35 @@ const Survey = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Check for unanswered required questions
+
     const unansweredQuestions = filteredQuestions.filter(
       (q) => q.required && (!formData[q.name] || (Array.isArray(formData[q.name]) && formData[q.name].length === 0))
     );
-  
+
     if (unansweredQuestions.length > 0) {
       setModal({
         isOpen: true,
-        message: 'Please answer all required questions before submitting the survey.',
+        message: language === 'en' ? 'Please answer all required questions before submitting the survey.' : 'الرجاء الإجابة على جميع الأسئلة المطلوبة قبل إرسال الاستبيان.',
       });
       return;
     }
-  
-    // Prepare data for submission
+
     const responses = filteredQuestions.map((question) => {
-      // Check if the question has been answered
       if (formData[question.name]) {
         return {
-          questionId: question.name, // Use the name of the question as the ID
+          questionId: question.name,
           answer: Array.isArray(formData[question.name])
-            ? formData[question.name] // Multi-select (checkbox)
-            : [formData[question.name]], // Single-select (radio)
+            ? formData[question.name]
+            : [formData[question.name]],
         };
       }
       return null;
-    }).filter(Boolean); // Remove any null entries
-  
-    // Add comments separately
+    }).filter(Boolean);
+
     const comments = formData.comments || '';
-  
+
     setIsSubmitting(true);
-  
+
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
       const response = await fetch(`${apiUrl}/api/surveys`, {
@@ -134,22 +117,24 @@ const Survey = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ vape: formData.vape, responses, comments }),
       });
-  
+
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-  
+
       setSubmitted(true);
-      setModal({ isOpen: true, message: 'Survey submitted successfully!' });
+      setModal({
+        isOpen: true,
+        message: language === 'en' ? 'Survey submitted successfully!' : 'تم إرسال الاستبيان بنجاح!',
+      });
     } catch (error) {
       console.error('Error submitting survey:', error);
       setModal({
         isOpen: true,
-        message: 'There was an error submitting the survey. Please try again.',
+        message: language === 'en' ? 'There was an error submitting the survey. Please try again.' : 'حدث خطأ أثناء إرسال الاستبيان. يرجى المحاولة مرة أخرى.',
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-  
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
@@ -164,7 +149,7 @@ const Survey = () => {
   }, [submitted, navigate]);
 
   const filteredQuestions = useMemo(
-    () => questions.filter((q) => q.renderCondition()),
+    () => questions.filter((q) => q.renderCondition(formData)),
     [formData, questions]
   );
 
@@ -190,7 +175,7 @@ const Survey = () => {
 
           <div className="option">
             <h2 id={`question-${currentQuestionIndex}`}>
-              {filteredQuestions[currentQuestionIndex].question}
+              {filteredQuestions[currentQuestionIndex].questionText}
             </h2>
             {filteredQuestions[currentQuestionIndex].isTextarea ? (
               <textarea
@@ -202,21 +187,21 @@ const Survey = () => {
               />
             ) : (
               filteredQuestions[currentQuestionIndex].options.map((option) => (
-                <label key={option}>
+                <label key={option.value}>
                   <input
                     type={filteredQuestions[currentQuestionIndex].isCheckbox ? 'checkbox' : 'radio'}
                     name={filteredQuestions[currentQuestionIndex].name}
-                    value={option}
+                    value={option.value}
                     checked={
                       Array.isArray(formData[filteredQuestions[currentQuestionIndex].name])
-                        ? formData[filteredQuestions[currentQuestionIndex].name].includes(option)
-                        : formData[filteredQuestions[currentQuestionIndex].name] === option
+                        ? formData[filteredQuestions[currentQuestionIndex].name].includes(option.value)
+                        : formData[filteredQuestions[currentQuestionIndex].name] === option.value
                     }
                     onChange={(e) =>
                       handleInputChange(e, filteredQuestions[currentQuestionIndex].name, filteredQuestions[currentQuestionIndex].isCheckbox)
                     }
                   />
-                  {option}
+                  {option.optionText}
                 </label>
               ))
             )}
@@ -224,14 +209,16 @@ const Survey = () => {
 
           <div className="survey-navigation">
             <button onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
-              Previous
+              {language === 'en' ? 'Previous' : 'السابق'}
             </button>
             {currentQuestionIndex === filteredQuestions.length - 1 ? (
               <button className="submit" onClick={handleSubmit} disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Submit'}
+                {isSubmitting ? (language === 'en' ? 'Submitting...' : 'إرسال...') : (language === 'en' ? 'Submit' : 'إرسال')}
               </button>
             ) : (
-              <button onClick={handleNext}>Next</button>
+              <button onClick={handleNext}>
+                {language === 'en' ? 'Next' : 'التالي'}
+              </button>
             )}
           </div>
         </>
