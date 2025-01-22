@@ -98,11 +98,12 @@ const Survey = () => {
     const surveyData = {
       vape: formData.vape,
       responses: filteredQuestions
-        .filter((q) => q.name !== 'vape' && q.name !== 'comments') // Exclude comments
+        .filter((q) => q.name !== 'vape' && q.name !== 'comments')
         .map((q) => ({
           questionId: q.name,
           answer: Array.isArray(formData[q.name]) ? formData[q.name] : [formData[q.name]],
         })),
+      comments: formData.comments || '', // Ensure comments are included in the data
     };
 
     try {
@@ -181,7 +182,11 @@ const Survey = () => {
                     type={filteredQuestions[currentQuestionIndex].isCheckbox ? 'checkbox' : 'radio'}
                     name={filteredQuestions[currentQuestionIndex].name}
                     value={option}
-                    checked={formData[filteredQuestions[currentQuestionIndex].name]?.includes(option)}
+                    checked={
+                      Array.isArray(formData[filteredQuestions[currentQuestionIndex].name])
+                        ? formData[filteredQuestions[currentQuestionIndex].name].includes(option)
+                        : formData[filteredQuestions[currentQuestionIndex].name] === option
+                    }
                     onChange={(e) =>
                       handleInputChange(e, filteredQuestions[currentQuestionIndex].name, filteredQuestions[currentQuestionIndex].isCheckbox)
                     }
