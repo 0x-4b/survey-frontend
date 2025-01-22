@@ -30,6 +30,11 @@ const Survey = () => {
     [language]
   );
 
+  // Language switch handler
+  const toggleLanguage = () => {
+    setLanguage((prevLanguage) => (prevLanguage === 'en' ? 'ar' : 'en'));
+  };
+
   const handleInputChange = (event, questionName, isCheckbox) => {
     const { value, checked } = event.target;
 
@@ -172,6 +177,11 @@ const Survey = () => {
                 : (currentQuestionIndex / (filteredQuestions.length - 1)) * 100
             }
           />
+
+          {/* Language Toggle Button */}
+          <button onClick={toggleLanguage} className="language-toggle">
+            {language === 'en' ? 'العربية' : 'English'}
+          </button>
 
           <div className="option">
             <h2 id={`question-${currentQuestionIndex}`}>
