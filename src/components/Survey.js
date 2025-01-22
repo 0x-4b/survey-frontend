@@ -94,11 +94,11 @@ const Survey = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const unansweredQuestions = filteredQuestions.filter(
       (q) => q.required && (!formData[q.name] || formData[q.name].length === 0)
     );
-
+  
     if (unansweredQuestions.length > 0) {
       setModal({
         isOpen: true,
@@ -106,19 +106,32 @@ const Survey = () => {
       });
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
+      const responses = filteredQuestions.map((question) => {
+        const answer = formData[question.name];
+  
+        return {
+          questionId: question.name,  // Use question.name as the unique identifier
+          answer: Array.isArray(answer) ? answer : [answer],  // Ensure the answer is an array (for single and multi-select)
+        };
+      });
+  
       const response = await fetch(`${apiUrl}/api/surveys`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          vape: formData.vape,
+          responses,
+          comments: formData.comments || '',  // Include comments if available
+        }),
       });
-
+  
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-
+  
       setSubmitted(true);
       setModal({ isOpen: true, message: 'Survey submitted successfully!' });
     } catch (error) {
@@ -131,6 +144,7 @@ const Survey = () => {
       setIsSubmitting(false);
     }
   };
+  
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
