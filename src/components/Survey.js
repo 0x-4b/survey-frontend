@@ -15,7 +15,6 @@ const Survey = () => {
 
   const navigate = useNavigate();
 
-  // Survey questions with dynamic conditional rendering
   const questions = useMemo(
     () => [
       { question: "Do you vape?", options: ["Yes", "No"], name: "vape", renderCondition: () => true, required: true },
@@ -42,7 +41,6 @@ const Survey = () => {
     [formData]
   );
 
-  // Handle form input changes (both checkboxes and radio buttons)
   const handleInputChange = (event, questionName, isCheckbox) => {
     const { value, checked } = event.target;
 
@@ -60,11 +58,11 @@ const Survey = () => {
     });
   };
 
-  // Handle navigation to the next question
   const handleNext = () => {
     const currentQuestion = filteredQuestions[currentQuestionIndex];
     const currentAnswer = formData[currentQuestion.name];
 
+    // Check if the current question has been answered
     if (!currentAnswer || (Array.isArray(currentAnswer) && currentAnswer.length === 0)) {
       setModal({
         isOpen: true,
@@ -83,7 +81,6 @@ const Survey = () => {
     }
   };
 
-  // Handle navigation to the previous question
   const handlePrevious = () => {
     const prevIndex = filteredQuestions
       .slice(0, currentQuestionIndex)
@@ -95,52 +92,51 @@ const Survey = () => {
     }
   };
 
-  // Submit survey data to the server
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const unansweredQuestions = filteredQuestions.filter(
+      (q) => q.required && (!formData[q.name] || formData[q.name].length === 0)
+    );
+
+    if (unansweredQuestions.length > 0) {
+      setModal({
+        isOpen: true,
+        message: 'Please answer all required questions before submitting the survey.',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
-  
-    const formDataToSend = {
-      vape: formData.vape,
-      responses: filteredQuestions.map((question, index) => ({
-        questionId: `question_${index + 1}`,
-        answer: formData[question.name],
-      })),
-      comments: formData.comments,
-    };
 
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
       const response = await fetch(`${apiUrl}/api/surveys`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formDataToSend),
+        body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
+      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
-      const responseData = await response.json();
       setSubmitted(true);
       setModal({ isOpen: true, message: 'Survey submitted successfully!' });
     } catch (error) {
+      console.error('Error submitting survey:', error);
       setModal({
         isOpen: true,
-        message: `Error submitting survey: ${error.message}. Please try again.`,
+        message: 'There was an error submitting the survey. Please try again.',
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Loading effect before survey data is shown
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Redirect after survey submission
   useEffect(() => {
     if (submitted) {
       const timer = setTimeout(() => navigate('/'), 2000);
@@ -148,7 +144,6 @@ const Survey = () => {
     }
   }, [submitted, navigate]);
 
-  // Filter questions that meet their render condition
   const filteredQuestions = useMemo(
     () => questions.filter((q) => q.renderCondition()),
     [formData, questions]
@@ -160,7 +155,10 @@ const Survey = () => {
       {!isLoading && (
         <>
           {modal.isOpen && (
-            <Modal message={modal.message} onClose={() => setModal({ isOpen: false, message: '' })} />
+            <Modal
+              message={modal.message}
+              onClose={() => setModal({ isOpen: false, message: '' })}
+            />
           )}
 
           <ProgressBar
@@ -179,7 +177,9 @@ const Survey = () => {
               <textarea
                 aria-labelledby={`question-${currentQuestionIndex}`}
                 value={formData[filteredQuestions[currentQuestionIndex].name] || ''}
-                onChange={(e) => handleInputChange(e, filteredQuestions[currentQuestionIndex].name)}
+                onChange={(e) =>
+                  handleInputChange(e, filteredQuestions[currentQuestionIndex].name)
+                }
               />
             ) : (
               filteredQuestions[currentQuestionIndex].options.map((option) => (
