@@ -283,7 +283,7 @@ const Survey = () => {
                       : 'إرسال'
                   }
                   onClick={handleSubmit}
-                  className={isSubmitting ? 'disabled' : ''}
+                  disabled={isSubmitting}
                 />
               ) : (
                 <CustomButton
