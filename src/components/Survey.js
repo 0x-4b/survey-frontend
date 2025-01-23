@@ -258,11 +258,13 @@ const Survey = () => {
             </div>
 
             <div className="survey-navigation">
-              <CustomButton
-                text={language === 'en' ? 'Previous' : 'السابق'}
-                onClick={handlePrevious}
-                className={currentQuestionIndex === 0 ? 'disabled' : ''}
-              />
+            <button
+              onClick={handlePrevious}
+              className={currentQuestionIndex === 0 ? 'disabled' : ''}
+            >
+              {language === 'en' ? 'Previous' : 'السابق'}
+            </button>
+
 
               {/* Language Toggle Button */}
               <CustomButton
@@ -272,25 +274,23 @@ const Survey = () => {
               />
 
               {currentQuestionIndex === filteredQuestions.length - 1 ? (
-                <CustomButton
-                  text={
-                    isSubmitting
-                      ? language === 'en'
-                        ? 'Submitting...'
-                        : 'إرسال...'
-                      : language === 'en'
-                      ? 'Submit'
-                      : 'إرسال'
-                  }
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                />
-              ) : (
-                <CustomButton
-                  text={language === 'en' ? 'Next' : 'التالي'}
-                  onClick={handleNext}
-                />
-              )}
+               <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting
+                  ? language === 'en'
+                    ? 'Submitting...'
+                    : 'إرسال...'
+                  : language === 'en'
+                  ? 'Submit'
+                  : 'إرسال'}
+              </button>
+            ) : (
+              <button onClick={handleNext}>
+                {language === 'en' ? 'Next' : 'التالي'}
+              </button>
+            )}
             </div>
           </div>
         </>
