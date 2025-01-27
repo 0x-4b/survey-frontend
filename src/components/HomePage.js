@@ -58,6 +58,10 @@ const HomePage = () => {
         className="survey-btn"
       />
 
+      <p className='c'>
+        Made by K
+      </p>
+
       {/* Modal */}
       {isModalOpen && (
         <Modal

@@ -18,6 +18,45 @@ body {
     overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
+/* By me section */
+
+@keyframes blinkCursor {
+    50% {
+      border-right-color: transparent;
+    }
+  }
+  
+  @keyframes typeAndDelete {
+    0%,
+    10% {
+      width: 0;
+    }
+    45%,
+    55% {
+      width: 5.45em;
+    } /* adjust width based on content */
+    90%,
+    100% {
+      width: 0;
+    }
+  }
+  
+.c {
+    font-size: 1rem;
+    font-weight: 550;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 0.2em solid #15aece; /* Cursor */
+    animation:
+      typeAndDelete 4s steps(11) infinite,
+      blinkCursor 0.5s step-end infinite alternate;
+    position: absolute;
+    bottom: 1.6rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 /* Homepage Container */
 .homepage {
     width: 100%;
@@ -93,6 +132,8 @@ body {
     outline: none;
     box-shadow: 0 0 8px rgba(3, 145, 191, 0.8);
 }
+
+
 
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
