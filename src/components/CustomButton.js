@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import '../styles/CustomButton.css'; // Import your custom styles here
 
 const CustomButton = ({ text, onClick, className }) => {
   return (
